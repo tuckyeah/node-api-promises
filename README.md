@@ -1,20 +1,19 @@
 [![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
 
-# Introduction to the Node API
+# Using Promises with the Node API
 
 ## Prerequisites
 
--   Familiarity with JavaScript as a language.
--   Familiarity with JavaScript in the browser environment.
+-   [ga-wdi-boston/node-api](https://github.com/ga-wdi-boston/node-api)
 
 ## Objectives
 
 By the end of this, developers should be able to:
 
--   Reference the Node API documentation for using JavaScript outside the
-    browser.
--   Reference the MDN JavaScript documentation for JavaScript language features.
--   Write a Node script using the File System API.
+-   Explain the value of using promises instead of callback interfaces.
+-   Read Node documentation that uses callbacks and translate that into
+    implementations using promises.
+-   Convert Node scripts using callbacks into scripts using promises.
 
 ## Preparation
 
@@ -22,43 +21,106 @@ By the end of this, developers should be able to:
     this repository.
 1.  Install dependencies with `npm install`.
 
-## JavaScript, the Browser, and Node
+## Callbacks versus Promises
 
--   JavaScript: a language specified by ECMA and implemented independently
--   Browser: an environment for running JavaScript (among other things)
--   Node: an environment for running JavaScript outside the browser
+-   Callbacks can be messy when they're nested: "callback hell". See [`lib/copy-json.js`](lib/copy-json.js).
+-   Each callback will have to handle it's own errors if necessary.
+-   In complex programs, it will be hard to tell in what order callbacks fire.
 
-How are the two environments similar? How do they differ?
+-   Promises, like callbacks, make asynchronicity explict.
+-   Promises, unlike callbacks, have a predictable order of execution.
+-   Promises are easier to read than callbacks.
+-   Promises can simplify error handling.
 
-## Lab: Research the File System API
+## Lab: Research the Promises API
 
-Take a few minutes to read the following API documentation for the Node File
-System module.
+Take a few minutes to read the following API documentation for the [native
+Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 
-While you're reading, imagine how you'd use each function. Write some example
-code in your notebook. Try to explain what each function does in your own words,
-including what sorts of arguments it takes and each argument's type.
+Note function signatures and argument types as you read. What kind of object
+does a promise take when it is constructed?
 
-If you finish early, look for other interesting functions in the File System
-module.
+1.  [Promise Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax)
+1.  [Promise.prototype](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Methods_2)
 
-1.  [`fs.readdir(path, callback)`](https://nodejs.org/dist/latest-v4.x/docs/api/fs.html#fs_fs_readdir_path_callback)
-1.  [`fs.readdirSync(path)`](https://nodejs.org/dist/latest-v4.x/docs/api/fs.html#fs_fs_readdirsync_path)
-1.  [`fs.readFile(file[, options], callback)`](https://nodejs.org/dist/latest-v4.x/docs/api/fs.html#fs_fs_readfile_file_options_callback)
-1.  [`fs.writeFile(file, data[, options], callback)`](https://nodejs.org/dist/latest-v4.x/docs/api/fs.html#fs_fs_writefile_file_data_options_callback)
+## Read-Along: Using Promises Instead of Callbacks
 
-## Read-Along: `copy-json.js`
+```js
+// remember that callback is something you write, in this case to perform some
+// processing on parsed JSON
+let readJSON = function (filename, callback){
+  fs.readFile(filename, 'utf8', function (err, res){
+    if (err) return callback(err); // what's going on here?
+    callback(null, JSON.parse(res)); // what if JSON.parse errors out?
+  });
+};
+```
 
-## Code-Along: `hey-yall.js`
+What are some weaknesses in this code? And the following?
 
-## Lab: Write a Randomizer
+```js
+let readJSON = function (filename, callback){ // 👀 here
+  fs.readFile(filename, 'utf8', function (err, res){
+    if (err) return callback(err); // pass the error from readFile
+    try {
+      res = JSON.parse(res);
+    } catch (ex) {
+      return callback(ex); // pass the error from JSON.parse
+    }
+    callback(null, res); // don't pass the error, since we should have caught it
+  });
+};
+```
+
+What about this instead?
+
+```js
+let readJSON = function (filename){ // 👀 here
+  return new Promise((resolve, reject) => {
+    fs.readFile(filename, 'utf8', (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  }).then((res) => {
+    return JSON.parse(res)
+  }).catch((err) => {
+    console.log(err);
+  });
+};
+```
+
+That's too verbose. This is better:
+
+```js
+let readJSON = function (filename){
+  return new Promise((resolve, reject) => {
+    fs.readFile(filename, 'utf8', (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  }).then(JSON.parse).catch(console.log); // what can we surmise about .then?
+};
+```
+
+## Code-Along: Promisify `copy-json.js`
+
+## Lab: Pomisify `hey-yall.js`
+
+## Lab: Promisify `randomizer.js`
 
 ## Additional Resources
 
--   [Docs | Node.js](https://nodejs.org/en/docs/)
--   [JavaScript | MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
--   [Node Courses from CodeSchool](https://www.codeschool.com/search?query=Node.js)
--   [NodeSchool](http://nodeschool.io/)
+-   [Promise - JavaScript | MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+-   [Promises](https://www.promisejs.org/)
+-   [Promisees · Courtesy of ponyfoo.com](http://bevacqua.github.io/promisees/)
+-   [wbinnssmith/awesome-promises: A curated list of useful resources for JavaScript Promises](https://github.com/wbinnssmith/awesome-promises)
+-   [How to escape Promise Hell — Medium](https://medium.com/@pyrolistical/how-to-get-out-of-promise-hell-8c20e0ab0513#.4wtj9hlvw)
 
 ## [License](LICENSE)
 
