@@ -23,9 +23,13 @@ By the end of this, developers should be able to:
 
 ## Callbacks versus Promises
 
+Callback drawbacks:
+
 -   Callbacks can be messy when they're nested: "callback hell". See [`lib/copy-json.js`](lib/copy-json.js).
 -   Each callback will have to handle it's own errors if necessary.
 -   In complex programs, it will be hard to tell in what order callbacks fire.
+
+Pros for Promises:
 
 -   Promises, like callbacks, make asynchronicity explict.
 -   Promises, unlike callbacks, have a predictable order of execution.
