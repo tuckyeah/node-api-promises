@@ -1,0 +1,11 @@
+{
+  "user": {
+    "email": "an@example.email",
+    "password": "example password",
+    "password_confirmation": "example password",
+    "person": {
+      "name": "Jane Doe",
+      "born_on": "1970-01-01"
+    }
+  }
+}
