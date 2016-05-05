@@ -31,8 +31,8 @@ Callback drawbacks:
 
 Pros for Promises:
 
--   Promises, like callbacks, make asynchronicity explict.
--   Promises, unlike callbacks, have a predictable order of execution.
+-   Promises, like callbacks, make asynchronicity explicit.
+-   Promises, unlike callbacks, clarify the order of execution.
 -   Promises are easier to read than callbacks.
 -   Promises can simplify error handling.
 
@@ -47,14 +47,16 @@ does a promise take when it is constructed?
 1.  [Promise Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax)
 1.  [Promise.prototype](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Methods_2)
 
-## Read-Along: Using Promises Instead of Callbacks
+## Annotate-Along: Using Promises Instead of Callbacks
 
 ```js
 // remember that callback is something you write, in this case to perform some
 // processing on parsed JSON
 let readJSON = function (filename, callback){
   fs.readFile(filename, 'utf8', function (err, res){
-    if (err) return callback(err); // what's going on here?
+    if (err) {
+      return callback(err); // what's going on here?
+    }
     callback(null, JSON.parse(res)); // what if JSON.parse errors out?
   });
 };
@@ -65,7 +67,9 @@ What are some weaknesses in this code? And the following?
 ```js
 let readJSON = function (filename, callback){ // 👀 here
   fs.readFile(filename, 'utf8', function (err, res){
-    if (err) return callback(err); // pass the error from readFile
+    if (err) {
+      return callback(err); // pass the error from readFile
+    }
     try {
       res = JSON.parse(res);
     } catch (ex) {
@@ -79,9 +83,9 @@ let readJSON = function (filename, callback){ // 👀 here
 What about this instead?
 
 ```js
-let readJSON = function (filename){ // 👀 here
+let readJSON = function (filename) { // <-- look here
   return new Promise((resolve, reject) => {
-    fs.readFile(filename, 'utf8', (err, res) => {
+    fs.readFile(filename, { encoding: 'utf8' }, (err, res) => {
       if (err) {
         reject(err);
       } else {
@@ -90,26 +94,37 @@ let readJSON = function (filename){ // 👀 here
     });
   }).then((res) => {
     return JSON.parse(res)
-  }).catch((err) => {
-    console.log(err);
   });
 };
+
+readJSON('./example.jsom')
+.then((pojo) => {
+  callback(pojo); // do something with the object
+})
+.catch((err) => { // handle error conditions
+  console.error(err);
+});
 ```
 
 That's too verbose. This is better:
 
 ```js
-let readJSON = function (filename){
+let readJSON = function (filename) {
   return new Promise((resolve, reject) => {
-    fs.readFile(filename, 'utf8', (err, res) => {
+    fs.readFile(filename, { encoding: 'utf8' }, (err, res) => {
       if (err) {
         reject(err);
       } else {
         resolve(res);
       }
     });
-  }).then(JSON.parse).catch(console.log); // what can we surmise about .then?
-};
+  })
+  .then(JSON.parse); // what can we surmise about .then?
+
+
+readJSON('./example.jsom')
+.then(callback) // do something with the object
+.catch(console.error);  // handle error conditions
 ```
 
 ## Code-Along: Promisify `copy-json.js`
