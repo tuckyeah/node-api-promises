@@ -29,25 +29,28 @@ Callback drawbacks:
 -   Each callback will have to handle it's own errors if necessary.
 -   In complex programs, it will be hard to tell in what order callbacks fire.
 
-Pros for Promises:
+Fortunately, there's a better way: Promises.
+
+### Lab: Research the Promises API
+
+Promises are objects that represent steps in an asynchronous process.
+As of 2016, they are natively supported in Node.
+
+Take a few minutes to read the API documentation on [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
+Note function signatures and argument types as you read.
+What arguments does a promise take when it is constructed?
+
+1.  [Promise Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax)
+1.  [Promise.prototype](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Methods_2)
+
+### Annotate-Along: Using Promises Instead of Callbacks
+
+Promises offer several advantages over callbacks.
 
 -   Promises, like callbacks, make asynchronicity explicit.
 -   Promises, unlike callbacks, clarify the order of execution.
 -   Promises are easier to read than callbacks.
 -   Promises can simplify error handling.
-
-## Lab: Research the Promises API
-
-Take a few minutes to read the following API documentation for the [native
-Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-
-Note function signatures and argument types as you read. What kind of object
-does a promise take when it is constructed?
-
-1.  [Promise Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax)
-1.  [Promise.prototype](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Methods_2)
-
-## Annotate-Along: Using Promises Instead of Callbacks
 
 ```js
 // remember that callback is something you write, in this case to perform some
