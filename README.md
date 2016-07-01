@@ -97,7 +97,7 @@ const readJSON = function (filename) { // <-- look here
   });
 };
 
-readJSON('./example.jsom')
+readJSON('./example.json')
 .then((pojo) => {
   callback(pojo); // do something with the object
 })
