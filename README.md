@@ -52,7 +52,7 @@ does a promise take when it is constructed?
 ```js
 // remember that callback is something you write, in this case to perform some
 // processing on parsed JSON
-let readJSON = function (filename, callback){
+const readJSON = function (filename, callback){
   fs.readFile(filename, 'utf8', function (err, res){
     if (err) {
       return callback(err); // what's going on here?
@@ -65,7 +65,7 @@ let readJSON = function (filename, callback){
 What are some weaknesses in this code? And the following?
 
 ```js
-let readJSON = function (filename, callback){ // 👀 here
+const readJSON = function (filename, callback){ // 👀 here
   fs.readFile(filename, 'utf8', function (err, res){
     if (err) {
       return callback(err); // pass the error from readFile
@@ -83,7 +83,7 @@ let readJSON = function (filename, callback){ // 👀 here
 What about this instead?
 
 ```js
-let readJSON = function (filename) { // <-- look here
+const readJSON = function (filename) { // <-- look here
   return new Promise((resolve, reject) => {
     fs.readFile(filename, { encoding: 'utf8' }, (err, res) => {
       if (err) {
@@ -109,7 +109,7 @@ readJSON('./example.jsom')
 That's too verbose. This is better:
 
 ```js
-let readJSON = function (filename) {
+const readJSON = function (filename) {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, { encoding: 'utf8' }, (err, res) => {
       if (err) {
