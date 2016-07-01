@@ -13,7 +13,7 @@ By the end of this, developers should be able to:
 -   Explain the value of using promises instead of callback interfaces.
 -   Read Node documentation that uses callbacks and translate that into
     implementations using promises.
--   Convert Node scripts using callbacks into scripts using promises.
+-   Rewrite Node scripts using callbacks as scripts using promises.
 
 ## Preparation
 
@@ -21,38 +21,42 @@ By the end of this, developers should be able to:
     this repository.
 1.  Install dependencies with `npm install`.
 
-## Callbacks versus Promises
+## Drawbacks to Callbacks
 
-Callback drawbacks:
+Asynchronous code necessitates callbacks.
+But dealing with lots of callbacks can be tricky:
 
 -   Callbacks can be messy when they're nested: "callback hell". See [`lib/copy-json.js`](lib/copy-json.js).
 -   Each callback will have to handle it's own errors if necessary.
 -   In complex programs, it will be hard to tell in what order callbacks fire.
 
-Pros for Promises:
+Fortunately, there's a better way: Promises.
+
+### Lab: Research the Promises API
+
+Promises are objects that represent steps in an asynchronous process.
+As of 2016, they are natively supported in Node.
+
+Take a few minutes to read the API documentation on [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
+Note function signatures and argument types as you read.
+What arguments does a promise take when it is constructed?
+
+1.  [Promise Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax)
+1.  [Promise.prototype](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Methods_2)
+
+### Annotate-Along: Using Promises Instead of Callbacks
+
+Promises offer several advantages over callbacks.
 
 -   Promises, like callbacks, make asynchronicity explicit.
 -   Promises, unlike callbacks, clarify the order of execution.
 -   Promises are easier to read than callbacks.
 -   Promises can simplify error handling.
 
-## Lab: Research the Promises API
-
-Take a few minutes to read the following API documentation for the [native
-Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-
-Note function signatures and argument types as you read. What kind of object
-does a promise take when it is constructed?
-
-1.  [Promise Syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Syntax)
-1.  [Promise.prototype](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#Methods_2)
-
-## Annotate-Along: Using Promises Instead of Callbacks
-
 ```js
 // remember that callback is something you write, in this case to perform some
 // processing on parsed JSON
-let readJSON = function (filename, callback){
+const readJSON = function (filename, callback){
   fs.readFile(filename, 'utf8', function (err, res){
     if (err) {
       return callback(err); // what's going on here?
@@ -65,7 +69,7 @@ let readJSON = function (filename, callback){
 What are some weaknesses in this code? And the following?
 
 ```js
-let readJSON = function (filename, callback){ // 👀 here
+const readJSON = function (filename, callback){ // 👀 here
   fs.readFile(filename, 'utf8', function (err, res){
     if (err) {
       return callback(err); // pass the error from readFile
@@ -83,7 +87,7 @@ let readJSON = function (filename, callback){ // 👀 here
 What about this instead?
 
 ```js
-let readJSON = function (filename) { // <-- look here
+const readJSON = function (filename) { // <-- look here
   return new Promise((resolve, reject) => {
     fs.readFile(filename, { encoding: 'utf8' }, (err, res) => {
       if (err) {
@@ -97,7 +101,7 @@ let readJSON = function (filename) { // <-- look here
   });
 };
 
-readJSON('./example.jsom')
+readJSON('./example.json')
 .then((pojo) => {
   callback(pojo); // do something with the object
 })
@@ -109,7 +113,7 @@ readJSON('./example.jsom')
 That's too verbose. This is better:
 
 ```js
-let readJSON = function (filename) {
+const readJSON = function (filename) {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, { encoding: 'utf8' }, (err, res) => {
       if (err) {
@@ -127,11 +131,11 @@ readJSON('./example.jsom')
 .catch(console.error);  // handle error conditions
 ```
 
-## Code-Along: Promisify `copy-json.js`
+### Code-Along: Promisify `copy-json.js`
 
-## Lab: Pomisify `hey-yall.js`
+### Lab: Promisify `hey-yall.js`
 
-## Lab: Promisify `randomizer.js`
+### Lab: Promisify `randomizer.js`
 
 ## Additional Resources
 
