@@ -13,7 +13,7 @@ By the end of this, developers should be able to:
 -   Explain the value of using promises instead of callback interfaces.
 -   Read Node documentation that uses callbacks and translate that into
     implementations using promises.
--   Convert Node scripts using callbacks into scripts using promises.
+-   Rewrite Node scripts using callbacks as scripts using promises.
 
 ## Preparation
 
@@ -21,9 +21,10 @@ By the end of this, developers should be able to:
     this repository.
 1.  Install dependencies with `npm install`.
 
-## Callbacks versus Promises
+## Drawbacks to Callbacks
 
-Callback drawbacks:
+Asynchronous code necessitates callbacks.
+But dealing with lots of callbacks can be tricky:
 
 -   Callbacks can be messy when they're nested: "callback hell". See [`lib/copy-json.js`](lib/copy-json.js).
 -   Each callback will have to handle it's own errors if necessary.
@@ -130,11 +131,11 @@ readJSON('./example.jsom')
 .catch(console.error);  // handle error conditions
 ```
 
-## Code-Along: Promisify `copy-json.js`
+### Code-Along: Promisify `copy-json.js`
 
-## Lab: Pomisify `hey-yall.js`
+### Lab: Promisify `hey-yall.js`
 
-## Lab: Promisify `randomizer.js`
+### Lab: Promisify `randomizer.js`
 
 ## Additional Resources
 
